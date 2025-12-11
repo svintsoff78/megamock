@@ -1,6 +1,6 @@
 {
   "name": "@svintsoff78/megamock",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple NestJS mock generation with decorators",
   "license": "MIT",
   "author": "",
@@ -11,6 +11,12 @@
     "dist",
     "README.md"
   ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json"
   },
