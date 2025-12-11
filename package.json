@@ -1,6 +1,6 @@
 {
   "name": "@svintsoff78/megamock",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Simple NestJS mock generation with decorators",
   "license": "MIT",
   "author": "",
