@@ -10,7 +10,9 @@
     "sourceMap": true,
     "outDir": "dist",
     "types": ["node"],
-    "removeComments": true
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src"]
 }
