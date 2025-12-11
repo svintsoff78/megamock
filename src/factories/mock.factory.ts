@@ -67,10 +67,6 @@ export class MockFactory {
         return Math.random() < 0.5;
       case 'uuid':
         return randomUUID();
-      case 'title':
-        return `Chat #${this.randomInt(1, 9999)}`;
-      case 'description':
-        return `Random description ${this.randomInt(1, 999999)}`;
       case 'date':
         return new Date(
           Date.now() - this.randomInt(0, 1000 * 60 * 60 * 24 * 30),

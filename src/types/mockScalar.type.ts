@@ -3,6 +3,4 @@ export type MockScalarType =
   | 'number'
   | 'boolean'
   | 'uuid'
-  | 'title'
-  | 'description'
   | 'date';
