@@ -1,1 +1,1 @@
-export type MockScalarType = 'string' | 'number' | 'boolean' | 'uuid' | 'title' | 'description' | 'date';
+export type MockScalarType = 'string' | 'number' | 'boolean' | 'uuid' | 'date';

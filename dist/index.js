@@ -23,5 +23,6 @@ __exportStar(require("./options/mockProperty.options"), exports);
 __exportStar(require("./options/mockRoute.options"), exports);
 __exportStar(require("./types/mock.type"), exports);
 __exportStar(require("./types/mockScalar.type"), exports);
+__exportStar(require("./types/mockEnum.type"), exports);
 __exportStar(require("./megamock.module"), exports);
 //# sourceMappingURL=index.js.map

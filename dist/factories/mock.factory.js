@@ -75,6 +75,9 @@ let MockFactory = (() => {
             return this.generateByType(type, depth);
         }
         generateByType(type, depth) {
+            if (Array.isArray(type)) {
+                return this.pickRandom(type);
+            }
             if (typeof type === 'string') {
                 return this.generatePrimitive(type);
             }
@@ -96,10 +99,6 @@ let MockFactory = (() => {
                     return Math.random() < 0.5;
                 case 'uuid':
                     return (0, crypto_1.randomUUID)();
-                case 'title':
-                    return `Chat #${this.randomInt(1, 9999)}`;
-                case 'description':
-                    return `Random description ${this.randomInt(1, 999999)}`;
                 case 'date':
                     return new Date(Date.now() - this.randomInt(0, 1000 * 60 * 60 * 24 * 30)).toISOString();
                 default:
@@ -117,6 +116,10 @@ let MockFactory = (() => {
                 const i = this.randomInt(0, chars.length - 1);
                 return chars[i];
             }).join('');
+        }
+        pickRandom(list) {
+            const idx = this.randomInt(0, list.length - 1);
+            return list[idx];
         }
     };
     __setFunctionName(_classThis, "MockFactory");

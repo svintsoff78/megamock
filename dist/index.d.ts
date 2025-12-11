@@ -7,4 +7,5 @@ export * from './options/mockProperty.options';
 export * from './options/mockRoute.options';
 export * from './types/mock.type';
 export * from './types/mockScalar.type';
+export * from './types/mockEnum.type';
 export * from './megamock.module';

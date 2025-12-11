@@ -7,4 +7,5 @@ export declare class MockFactory {
     private generatePrimitive;
     private randomInt;
     private randomString;
+    private pickRandom;
 }
