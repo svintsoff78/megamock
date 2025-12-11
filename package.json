@@ -1,6 +1,6 @@
 {
   "name": "@svintsoff78/megamock",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Simple NestJS mock generation with decorators",
   "license": "MIT",
   "author": "",
@@ -15,10 +15,10 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "peerDependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.0.0"
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@types/node": "^25.0.0",
