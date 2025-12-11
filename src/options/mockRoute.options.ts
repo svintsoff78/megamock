@@ -1,4 +1,4 @@
-import { Type } from '@nestjs/common';
+import {Type} from '@nestjs/common';
 
 /**
  * Configuration options for the `@MockRoute` decorator.
@@ -35,7 +35,7 @@ import { Type } from '@nestjs/common';
  * actual controller method.
  */
 export interface MockRouteOptions {
-  entity: Type<any>;
-  isArray?: boolean;
-  arrayLength?: [number, number];
+    entity: Type<any>;
+    isArray?: boolean;
+    arrayLength?: [number, number];
 }

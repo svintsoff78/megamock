@@ -24,8 +24,8 @@
  * For more complex structures, use nested classes via `MockType`.
  */
 export type MockScalarType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'uuid'
-  | 'date';
+    | 'string'
+    | 'number'
+    | 'boolean'
+    | 'uuid'
+    | 'date';
