@@ -12,7 +12,7 @@ It creates mock API responses directly from class definitions using decorators â
 <p align="center">
   <img src="https://img.shields.io/badge/NestJS-Compatible-red?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Typescript-100%25-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/npm/v/%40megamock/nest?style=for-the-badge" />
+  <img src="https://img.shields.io/npm/v/%40svintsoff78/megamock?style=for-the-badge" />
 </p>
 
 ---
