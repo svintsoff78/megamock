@@ -1,12 +1,7 @@
-import {
-  applyDecorators,
-  SetMetadata,
-  Type,
-  UseInterceptors,
-} from '@nestjs/common';
-import { MockRouteOptions } from '../options/mockRoute.options';
-import { MOCK_ROUTE_KEY } from '../constants/constants';
-import { MockRouteInterceptor } from '../interceptors/mockRoute.interceptor';
+import {applyDecorators, SetMetadata, Type, UseInterceptors,} from '@nestjs/common';
+import {MockRouteOptions} from '../options/mockRoute.options';
+import {MOCK_ROUTE_KEY} from '../constants/constants';
+import {MockRouteInterceptor} from '../interceptors/mockRoute.interceptor';
 
 /**
  * Method decorator that enables automatic mock response generation
@@ -62,11 +57,11 @@ import { MockRouteInterceptor } from '../interceptors/mockRoute.interceptor';
  *          and applies the mock route interceptor.
  */
 export function MockRoute(
-  entity: Type<any>,
-  options: Omit<MockRouteOptions, 'entity'> = {},
+    entity: Type<any>,
+    options: Omit<MockRouteOptions, 'entity'> = {},
 ): MethodDecorator {
-  return applyDecorators(
-    SetMetadata(MOCK_ROUTE_KEY, { entity, ...options }),
-    UseInterceptors(MockRouteInterceptor),
-  );
+    return applyDecorators(
+        SetMetadata(MOCK_ROUTE_KEY, {entity, ...options}),
+        UseInterceptors(MockRouteInterceptor),
+    );
 }

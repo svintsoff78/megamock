@@ -1,4 +1,4 @@
-import { MockType } from '../types/mock.type';
+import {MockType} from '../types/mock.type';
 
 /**
  * Configuration options for a property decorated with `@MockProperty`.
@@ -32,8 +32,8 @@ import { MockType } from '../types/mock.type';
  * ```
  */
 export interface MockPropertyOptions {
-  type: MockType;
-  nullable?: boolean;
-  isArray?: boolean;
-  arrayLength?: [number, number];
+    type: MockType;
+    nullable?: boolean;
+    isArray?: boolean;
+    arrayLength?: [number, number];
 }

@@ -1,38 +1,62 @@
-import type { Type } from '@nestjs/common';
-import { MockScalarType } from './mockScalar.type';
+import type {Type} from '@nestjs/common';
+import {MockScalarType} from './mockScalar.type';
+import {MockEnumType} from "./mockEnum.type";
 
 /**
- * Logical type describing what kind of mock value should be generated.
+ * Describes the kind of mock value that MegaMock should generate for a property.
  *
- * `MockType` can represent:
+ * `MockType` supports three kinds of mock definitions:
  *
- * - A **scalar mock type** (`MockScalarType`), such as `'string'`,
- *   `'number'`, `'boolean'`, `'uuid'`, etc.
- * - A **class constructor** (`Type<any>`), representing a nested mockable
- *   entity. In this case, MegaMock recursively generates mock objects using
- *   the `MockFactory` and the `@MockProperty` annotations defined on the class.
+ * ## 1. Scalar mock types (`MockScalarType`)
+ * Basic primitive generators such as:
+ * - `'string'`
+ * - `'number'`
+ * - `'boolean'`
+ * - `'uuid'`
+ * - `'date'`
  *
- * ## Examples
- *
- * ### Scalar type
+ * Example:
  * ```ts
- * @MockProperty({ type: 'string' })
- * name: string;
+ * @MockProperty({ type: 'uuid' })
+ * id: string;
  * ```
  *
- * ### Nested entity
+ * ## 2. Enum-like fixed value sets (`MockEnumType`)
+ * When `type` is an array, MegaMock randomly selects **one value**
+ * from this array. Values may be:
+ * - string literals
+ * - numbers
+ * - booleans
+ *
+ * Example:
+ * ```ts
+ * @MockProperty({ type: ['draft', 'published', 'archived'] })
+ * status: string;
+ * ```
+ *
+ * This enables enum-mocking behavior without requiring a TypeScript enum.
+ *
+ *
+ * ## 3. Nested entity constructors (`Type<any>`)
+ * When the type is a class constructor, MegaMock recursively generates
+ * a nested mock object using all `@MockProperty` definitions inside that class.
+ *
+ * Example:
  * ```ts
  * @MockProperty({ type: UserMock })
  * author: UserMock;
  * ```
  *
- * ### Nested array
- * ```ts
- * @MockProperty({ type: UserMock, isArray: true })
- * participants: UserMock[];
- * ```
+ * This allows structured, deeply nested mock generation while preventing
+ * infinite loops via depth limiting.
  *
- * This union type enables MegaMock to support both primitive and structured
- * mock generation in a clean and declarative way.
+ *
+ * ## Summary
+ * `MockType` gives MegaMock the flexibility to generate:
+ * - primitive values
+ * - enum-like constrained values
+ * - fully nested mock entity graphs
+ *
+ * This union type is the core of MegaMock's declarative mock system.
  */
-export type MockType = MockScalarType | Type<any>;
+export type MockType = MockScalarType | MockEnumType | Type<any>;

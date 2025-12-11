@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { MOCK_PROPERTIES_KEY } from '../constants/constants';
-import { MockPropertyOptions } from '../options/mockProperty.options';
-import { MockType } from '../types/mock.type';
-import { MockScalarType } from '../types/mockScalar.type';
-import { randomUUID } from 'crypto';
+import {Injectable} from '@nestjs/common';
+import {MOCK_PROPERTIES_KEY} from '../constants/constants';
+import {MockPropertyOptions} from '../options/mockProperty.options';
+import {MockType} from '../types/mock.type';
+import {MockScalarType} from '../types/mockScalar.type';
+import {randomUUID} from 'crypto';
 
 /**
  * Core factory responsible for generating mock objects for MegaMock.
@@ -32,7 +32,7 @@ export class MockFactory {
      * instead of going deeper, which protects against circular references like:
      * `UserMock -> ChatMock -> UserMock -> ...`
      */
-  private readonly maxDepth = 3;
+    private readonly maxDepth = 3;
 
     /**
      * Creates a single mock instance for the given entity class.
@@ -47,18 +47,18 @@ export class MockFactory {
      * @param depth Current recursion depth (used internally for nested entities).
      * @returns A mock instance of the given entity.
      */
-  create<T>(entity: new () => T, depth = 1): T {
-    const mockProps: Record<string, MockPropertyOptions> =
-      Reflect.getMetadata(MOCK_PROPERTIES_KEY, entity) || {};
+    create<T>(entity: new () => T, depth = 1): T {
+        const mockProps: Record<string, MockPropertyOptions> =
+            Reflect.getMetadata(MOCK_PROPERTIES_KEY, entity) || {};
 
-    const result: any = {};
+        const result: any = {};
 
-    for (const [key, options] of Object.entries(mockProps)) {
-      result[key] = this.generateValue(options, depth);
+        for (const [key, options] of Object.entries(mockProps)) {
+            result[key] = this.generateValue(options, depth);
+        }
+
+        return result as T;
     }
-
-    return result as T;
-  }
 
     /**
      * Creates an array of mock instances for the given entity class.
@@ -72,9 +72,9 @@ export class MockFactory {
      * @param depth Current recursion depth (propagated to child calls).
      * @returns An array of mock instances.
      */
-  createMany<T>(entity: new () => T, count: number, depth = 1): T[] {
-    return Array.from({ length: count }, () => this.create(entity, depth));
-  }
+    createMany<T>(entity: new () => T, count: number, depth = 1): T[] {
+        return Array.from({length: count}, () => this.create(entity, depth));
+    }
 
     /**
      * Generates a value for a single property based on its mock options.
@@ -88,51 +88,85 @@ export class MockFactory {
      * @returns Generated mock value for the property.
      * @internal
      */
-  private generateValue(options: MockPropertyOptions, depth: number): any {
-    const { type, nullable, isArray, arrayLength } = options;
+    private generateValue(options: MockPropertyOptions, depth: number): any {
+        const {type, nullable, isArray, arrayLength} = options;
 
-    if (nullable && Math.random() < 0.3) {
-      return null;
+        if (nullable && Math.random() < 0.3) {
+            return null;
+        }
+
+        if (isArray) {
+            const [min = 1, max = 5] = arrayLength || [1, 5];
+            const length = this.randomInt(min, max);
+
+            return Array.from({length}, () => this.generateByType(type, depth));
+        }
+
+        return this.generateByType(type, depth);
     }
 
-    if (isArray) {
-      const [min = 1, max = 5] = arrayLength || [1, 5];
-      const length = this.randomInt(min, max);
-      return Array.from({ length }, () => this.generateByType(type, depth));
-    }
-
-    return this.generateByType(type, depth);
-  }
 
     /**
-     * Resolves a value based on the configured mock type.
+     * Resolves a mock value based on the logical mock type definition.
      *
-     * - For string-based types ({@link MockScalarType}) it uses
-     *   {@link MockFactory.generatePrimitive}.
-     * - For function types it treats them as class constructors and recursively
-     *   calls {@link MockFactory.create} to build nested entities.
+     * `generateByType` is the central dispatcher for interpreting a property's
+     * declared `MockType`. It determines whether the mock value should be:
      *
-     * Recursion is capped by {@link MockFactory.maxDepth} to avoid infinite loops.
+     * 1. **A fixed enum-like value**
+     *    If `type` is an array (`MockEnumType`), one of the values is selected
+     *    randomly using {@link pickRandom}.
      *
-     * @param type Logical mock type (scalar type or constructor).
-     * @param depth Current recursion depth.
-     * @returns Generated primitive or nested entity, or `null` on depth limit.
+     * 2. **A generated primitive**
+     *    If `type` is a scalar identifier (`MockScalarType`, e.g. `'string'`),
+     *    a corresponding primitive mock value is produced via
+     *    {@link generatePrimitive}.
+     *
+     * 3. **A nested mock object**
+     *    If `type` is a class constructor, MegaMock treats it as a nested
+     *    entity and recursively calls {@link create}.
+     *    Depth is limited by {@link maxDepth} to avoid infinite recursion
+     *    in cyclic structures.
+     *
+     * If none of the supported patterns match, the function returns `null`.
+     *
+     * ## Example resolution flow
+     * ```ts
+     * // Enum type:
+     * type: ['draft', 'published']
+     * → one of ["draft", "published"]
+     *
+     * // Primitive type:
+     * type: 'uuid'
+     * → "d4e73d72-..."
+     *
+     * // Nested type:
+     * type: UserMock
+     * → { id: "...", name: "...", ... }
+     * ```
+     *
+     * @param type Logical mock type describing how the value should be generated.
+     * @param depth Current recursion depth for nested entity creation.
+     * @returns Generated mock value of the appropriate type, or `null` if unsupported.
      * @internal
      */
-  private generateByType(type: MockType, depth: number): any {
-    if (typeof type === 'string') {
-      return this.generatePrimitive(type);
-    }
+    private generateByType(type: MockType, depth: number): any {
+        if (Array.isArray(type)) {
+            return this.pickRandom(type);
+        }
 
-    if (typeof type === 'function') {
-      if (depth >= this.maxDepth) {
+        if (typeof type === 'string') {
+            return this.generatePrimitive(type);
+        }
+
+        if (typeof type === 'function') {
+            if (depth >= this.maxDepth) {
+                return null;
+            }
+            return this.create(type as any, depth + 1);
+        }
+
         return null;
-      }
-      return this.create(type as any, depth + 1);
     }
-
-    return null;
-  }
 
     /**
      * Generates a primitive mock value for the given scalar type.
@@ -144,24 +178,24 @@ export class MockFactory {
      * @returns A randomly generated primitive matching the requested type.
      * @internal
      */
-  private generatePrimitive(type: MockScalarType): any {
-    switch (type) {
-      case 'string':
-        return this.randomString(10);
-      case 'number':
-        return this.randomInt(1, 1000);
-      case 'boolean':
-        return Math.random() < 0.5;
-      case 'uuid':
-        return randomUUID();
-      case 'date':
-        return new Date(
-          Date.now() - this.randomInt(0, 1000 * 60 * 60 * 24 * 30),
-        ).toISOString();
-      default:
-        return null;
+    private generatePrimitive(type: MockScalarType): any {
+        switch (type) {
+            case 'string':
+                return this.randomString(10);
+            case 'number':
+                return this.randomInt(1, 1000);
+            case 'boolean':
+                return Math.random() < 0.5;
+            case 'uuid':
+                return randomUUID();
+            case 'date':
+                return new Date(
+                    Date.now() - this.randomInt(0, 1000 * 60 * 60 * 24 * 30),
+                ).toISOString();
+            default:
+                return null;
+        }
     }
-  }
 
     /**
      * Returns a random integer between `min` and `max` (inclusive).
@@ -173,11 +207,12 @@ export class MockFactory {
      * @returns Random integer within the range.
      * @internal
      */
-  private randomInt(min: number, max: number): number {
-    const from = Math.ceil(min);
-    const to = Math.floor(max);
-    return Math.floor(Math.random() * (to - from + 1)) + from;
-  }
+    private randomInt(min: number, max: number): number {
+        const from = Math.ceil(min);
+        const to = Math.floor(max);
+
+        return Math.floor(Math.random() * (to - from + 1)) + from;
+    }
 
     /**
      * Generates a random alphanumeric string of the given length.
@@ -188,11 +223,37 @@ export class MockFactory {
      * @returns Random string consisting of lowercase letters and digits.
      * @internal
      */
-  private randomString(length: number): string {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    return Array.from({ length }, () => {
-      const i = this.randomInt(0, chars.length - 1);
-      return chars[i];
-    }).join('');
-  }
+    private randomString(length: number): string {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+        return Array.from({length}, () => {
+            const i = this.randomInt(0, chars.length - 1);
+            return chars[i];
+        }).join('');
+    }
+
+    /**
+     * Returns a random element from the provided list.
+     *
+     * Used internally by MegaMock when a property defines its type
+     * as a fixed-value array (`MockEnumType`). This enables enum-like
+     * mock generation, where the produced value must be one of the
+     * explicitly allowed literals.
+     *
+     * ## Example
+     * ```ts
+     * pickRandom(['draft', 'published', 'archived']);
+     * // → "published" (random)
+     * ```
+     *
+     * @typeParam T The literal type of the list elements.
+     * @param list A readonly array of allowed values.
+     * @returns A randomly selected element from the array.
+     * @internal
+     */
+    private pickRandom<T>(list: readonly T[]): T {
+        const idx = this.randomInt(0, list.length - 1);
+
+        return list[idx];
+    }
 }

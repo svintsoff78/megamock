@@ -1,5 +1,5 @@
-import { MockPropertyOptions } from '../options/mockProperty.options';
-import { MOCK_PROPERTIES_KEY } from '../constants/constants';
+import {MockPropertyOptions} from '../options/mockProperty.options';
+import {MOCK_PROPERTIES_KEY} from '../constants/constants';
 
 /**
  * Decorator used to mark a class property as a mockable field.
@@ -53,18 +53,18 @@ import { MOCK_PROPERTIES_KEY } from '../constants/constants';
  * @returns A property decorator registering metadata for mock generation.
  */
 export function MockProperty(options: MockPropertyOptions): PropertyDecorator {
-  return (target: object, propertyKey: string | symbol) => {
-    const ctor = target.constructor;
-    const existing: Record<string, MockPropertyOptions> =
-      Reflect.getMetadata(MOCK_PROPERTIES_KEY, ctor) || {};
+    return (target: object, propertyKey: string | symbol) => {
+        const ctor = target.constructor;
+        const existing: Record<string, MockPropertyOptions> =
+            Reflect.getMetadata(MOCK_PROPERTIES_KEY, ctor) || {};
 
-    Reflect.defineMetadata(
-      MOCK_PROPERTIES_KEY,
-      {
-        ...existing,
-        [propertyKey as string]: options,
-      },
-      ctor,
-    );
-  };
+        Reflect.defineMetadata(
+            MOCK_PROPERTIES_KEY,
+            {
+                ...existing,
+                [propertyKey as string]: options,
+            },
+            ctor,
+        );
+    };
 }
